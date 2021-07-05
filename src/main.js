@@ -12,17 +12,12 @@ window.addEventListener("load", async () => {
   const iconElement = document.querySelector(".icon");
   const degreeSection = document.querySelector(".degree-section");
   const degreeSymbol = degreeSection.querySelector(".temperature-symbol");
-  /**
-   * standard = Kelvin
-   * metric = Celsius
-   * imperial = Fahrenheit
-   * @typedef {'standard'|'metric'|'imperial'} UnitOfMeasurement
-   */
 
+  // Timezone achterhalen
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   locationTimezone.textContent = timezone;
 
-  if (navigator.geolocation) {
+  try {
     const position = await getPosition();
     const { longitude: long, latitude: lat } = position.coords;
     await updateWeatherInformation(lat, long);
@@ -36,10 +31,16 @@ window.addEventListener("load", async () => {
         degreeSymbol.innerHTML = "&deg;C";
       }
     });
-  } else {
-    alert(
-      `Het is niet gelukt om je locatie op te halen. Zet locatie aan om gebruik te maken van deze pagina`
-    );
+  } catch (e) {
+    if (e instanceof GeolocationPositionError) {
+      alert(
+        `Het is niet gelukt om je locatie op te halen. Zet locatie aan om gebruik te maken van deze pagina`
+      );
+    } else {
+      alert("Oeps er is iets mis gegaan, zie de console");
+    }
+
+    console.error(e);
   }
 
   /**
@@ -93,4 +94,11 @@ window.addEventListener("load", async () => {
     iconElement.crossOrigin = "anonymous";
     iconElement.src = `https://openweathermap.org/img/wn/${weatherMapIcon}@2x.png`;
   }
+
+  /**
+   * standard = Kelvin
+   * metric = Celsius
+   * imperial = Fahrenheit
+   * @typedef {'standard'|'metric'|'imperial'} UnitOfMeasurement
+   */
 });
