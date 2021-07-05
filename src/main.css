@@ -28,6 +28,10 @@ body {
   flex-direction: column;
 }
 
+.location {
+  flex-wrap: wrap;
+}
+
 .degree-section {
   display: flex;
   align-items: center;
